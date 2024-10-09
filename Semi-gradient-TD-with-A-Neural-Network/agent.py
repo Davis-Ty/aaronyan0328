@@ -1,66 +1,76 @@
 #!/usr/bin/env python
 
-"""An abstract class that specifies the Agent API for RL-Glue-py.
-"""
+"""An abstract class that specifies the Agent API for RL-Glue-py."""
 
-from __future__ import print_function
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
+import numpy as np
 
 
-class BaseAgent:
-    """Implements the agent for an RL-Glue environment.
-    Note:
-        agent_init, agent_start, agent_step, agent_end, agent_cleanup, and
-        agent_message are required methods.
+class BaseAgent(ABC):
+    """Abstract base class for RL agents.
+
+    Defines the required methods for interacting with an RL-Glue environment.
     """
 
-    __metaclass__ = ABCMeta
-
     def __init__(self):
+        super().__init__()
+
+    @abstractmethod
+    def agent_init(self, agent_info=None):
+        """Initialize the agent.
+
+        Args:
+            agent_info (dict, optional): Agent initialization information. Defaults to None.
+        """
         pass
 
     @abstractmethod
-    def agent_init(self, agent_info= {}):
-        """Setup for the agent called when the experiment first starts."""
+    def agent_start(self, observation: np.ndarray) -> np.ndarray:
+        """Start an episode.
 
-    @abstractmethod
-    def agent_start(self, observation):
-        """The first method called when the experiment starts, called after
-        the environment starts.
         Args:
-            observation (Numpy array): the state observation from the environment's evn_start function.
+            observation (np.ndarray): Initial environment observation.
+
         Returns:
-            The first action the agent takes.
+            np.ndarray: The agent's first action.
         """
+        pass
 
     @abstractmethod
-    def agent_step(self, reward, observation):
-        """A step taken by the agent.
+    def agent_step(self, reward: float, observation: np.ndarray) -> np.ndarray:
+        """Take a step in the environment.
+
         Args:
-            reward (float): the reward received for taking the last action taken
-            observation (Numpy array): the state observation from the
-                environment's step based, where the agent ended up after the
-                last step
+            reward (float): Reward received from the previous step.
+            observation (np.ndarray): Current environment observation.
+
         Returns:
-            The action the agent is taking.
+            np.ndarray: The agent's next action.
         """
+        pass
 
     @abstractmethod
-    def agent_end(self, reward):
-        """Run when the agent terminates.
+    def agent_end(self, reward: float):
+        """End an episode.
+
         Args:
-            reward (float): the reward the agent received for entering the terminal state.
+            reward (float): Reward received for the final step.
         """
+        pass
 
     @abstractmethod
     def agent_cleanup(self):
-        """Cleanup done after the agent ends."""
+        """Clean up agent resources."""
+        pass
 
     @abstractmethod
-    def agent_message(self, message):
-        """A function used to pass information from the agent to the experiment.
+    def agent_message(self, message: str) -> str:
+        """Handle messages from the experiment.
+
         Args:
-            message: The message passed to the agent.
+            message (str): Message from the experiment.
+
         Returns:
-            The response (or answer) to the message.
+            str: Response to the message.
         """
+        pass
